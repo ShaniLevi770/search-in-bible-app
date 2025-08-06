@@ -80,9 +80,12 @@ def find_verses_by_name(name, verses):
 def index():
     word = ""
     skip = 0
-    results = []
+    word_results = []
+    word_not_found = False
     name_results = []
     name_not_found = False
+    word_results_count= 0
+    name_results_count= 0
 
     if request.method == "POST":
         word = request.form.get("word", "").strip()
@@ -91,13 +94,22 @@ def index():
             skip = int(skip_input)
         except ValueError:
             skip = 0
+
         if word:
-            results = skip_letter_search(word, skip, verses)
+            if all('\u0590' <= ch <= '\u05EA' for ch in word) and len(word) > 1:
+                word_results = skip_letter_search(word, skip, verses)
+                word_results_count = len(word_results)
+                if not word_results:
+                   word_not_found = "❌ לא נמצאו תוצאות לחיפוש"
+            else:
+                word_not_found = "❌ רק אותיות בעברית, שתי אותיות או יותר"
+        
 
         name = request.form.get("name", "").strip()
         if name:
             if all('\u0590' <= ch <= '\u05EA' for ch in name) and len(name) > 1:
                 name_results = find_verses_by_name(name, verses)
+                name_results_count = len(name_results)
                 if not name_results:
                     name_not_found = "❌ לא נמצאו פסוקים שמתחילים ומסתיימים באותיות המתאימות לשם"
             else:
@@ -105,10 +117,16 @@ def index():
 
 
 
-    return render_template("index.html", word=word, skip=skip,
-                           results=results,
+    return render_template("index.html", 
+                           word=word, 
+                           skip=skip,
+                           word_results=word_results,
+                           word_not_found=word_not_found,
                            name_results=name_results,
-                           name_not_found=name_not_found)
+                           name_not_found=name_not_found,
+                           word_results_count=len(word_results),
+                           name_results_count=len(name_results)
+                           )
 
 if __name__ == "__main__":
     app.run(debug=True)
