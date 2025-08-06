@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>חיפוש בתנ"ך</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            direction: rtl;
+            text-align: right;
+            padding: 20px;
+        }
+
+        .form-section {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 600px;
+            margin: 20px auto;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="text"], input[type="number"] {
+            padding: 10px;
+            font-size: 16px;
+            width: calc(100% - 22px);
+            margin-bottom: 15px;
+        }
+
+        input[type="submit"] {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .results {
+            margin-top: 30px;
+            max-width: 800px;
+            margin-right: auto;
+            margin-left: auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .verse {
+            margin-bottom: 20px;
+        }
+
+        .source {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        b {
+            background-color: yellow;
+        }
+
+        .warning {
+            color: red;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 🔍 Name Search Form -->
+    <form method="POST" class="form-section">
+        <h2>🔍 חיפוש בתנ"ך לפי שם</h2>
+        <label for="name">הכנס שם בעברית:</label>
+        <input type="text" id="name" name="name" value="{{ name or '' }}" placeholder="למשל: דוד">
+        {% if name_warning %}
+            <div class="warning">{{ name_warning }}</div>
+        {% endif %}
+        <input type="submit" name="action" value="חיפוש לפי שם">
+    </form>
+
+    <!-- 🔡 Skip-Letter Search Form -->
+    <form method="POST" class="form-section">
+        <h2>🔡 חיפוש לפי אותיות מדלגות</h2>
+        <label for="word">מילה לחיפוש:</label>
+        <input type="text" id="word" name="word" value="{{ word or '' }}" placeholder="למשל: אמת">
+
+        <label for="skip">דלג כל X אותיות:</label>
+        <input type="number" id="skip" name="skip" value="{{ skip or '' }}" min="1">
+        {% if skip_warning %}
+            <div class="warning">{{ skip_warning }}</div>
+        {% endif %}
+        <input type="submit" name="action" value="חיפוש מדלג">
+    </form>
+
+    {% if results %}
+        <div class="results">
+            <h3>תוצאות החיפוש:</h3>
+            {% for result in results %}
+                <div class="verse">
+                    <div class="source">{{ result.source }}</div>
+                    <div class="text">{{ result.text|safe }}</div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+</body>
+</html>

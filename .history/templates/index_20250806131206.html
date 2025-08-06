@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>חיפוש פסוקים</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            direction: rtl;
+            background-color: #f9f9f9;
+            padding: 2em;
+        }
+        h1 {
+            color: #333;
+        }
+        form {
+            margin-bottom: 1em;
+        }
+        input[type="text"] {
+            padding: 0.5em;
+            font-size: 1em;
+            width: 250px;
+        }
+        input[type="submit"] {
+            padding: 0.5em 1em;
+            font-size: 1em;
+        }
+        .warning {
+            color: red;
+            margin-top: 1em;
+            font-weight: bold;
+        }
+        .verse {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 1em;
+            border-radius: 6px;
+            margin-bottom: 1em;
+        }
+        .verse b {
+            color: red;
+        }
+        .location {
+            color: #555;
+            font-size: 0.9em;
+            margin-bottom: 0.3em;
+        }
+    </style>
+</head>
+<body>
+
+<h1>🔍 חיפוש פסוקים לפי התחלה וסיום</h1>
+
+<form method="post">
+    <label>הכנס שם בעברית:</label>
+    <input type="text" name="name" value="{{ name }}">
+    <input type="submit" value="חפש">
+</form>
+
+{% if warning %}
+    <div class="warning">{{ warning }}</div>
+{% endif %}
+
+{% if results %}
+    <h2>נמצאו {{ results|length }} תוצאות:</h2>
+    {% for r in results %}
+        <div class="verse">
+            <div class="location">{{ r.source }}</div>
+            <div class="text">{{ r.highlighted|safe }}</div>
+        </div>
+    {% endfor %}
+{% elif name and not warning %}
+    <p>❌ לא נמצאו פסוקים שמתחילים ומסתיימים באותיות של "{{ name }}"</p>
+{% endif %}
+
+</body>
+</html>

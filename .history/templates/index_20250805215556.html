@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>חיפוש בתנ״ך</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            direction: rtl;
+            background-color: #f9f9f9;
+            padding: 2em;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        form {
+            margin-bottom: 2em;
+        }
+        input[type="text"], input[type="number"] {
+            padding: 0.5em;
+            font-size: 1em;
+            width: 250px;
+            margin-left: 0.5em;
+        }
+        input[type="submit"] {
+            padding: 0.5em 1em;
+            font-size: 1em;
+        }
+        .verse {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 1em;
+            border-radius: 6px;
+            margin-bottom: 1em;
+        }
+        .verse b {
+            color: red;
+        }
+        .location {
+            color: #555;
+            font-size: 0.9em;
+            margin-bottom: 0.5em;
+        }
+    </style>
+</head>
+<body>
+
+<h1>🔎 חיפוש מילים בתנ״ך</h1>
+
+<!-- טופס חיפוש בדילוגי אותיות -->
+<form method="post">
+    <label>מילה לחיפוש:</label>
+    <input type="text" name="word" value="{{ word }}" required>
+    <label>דילוג (0 לחיפוש רגיל):</label>
+    <input type="number" name="skip" value="{{ skip }}" min="0">
+    <input type="submit" value="חפש">
+</form>
+
+<!-- תוצאות חיפוש בדילוגי אותיות -->
+{% if results %}
+    <h2>נמצאו {{ results|length }} תוצאות:</h2>
+    {% for r in results %}
+        <div class="verse">
+            <div class="location">{{ r.source }}</div>
+            <div class="text">{{ r.highlighted|safe }}</div>
+        </div>
+    {% endfor %}
+{% elif word %}
+    <p>❌ לא נמצאו תוצאות לחיפוש "{{ word }}"</p>
+{% endif %}
+
+<hr>
+
+<h2>✨ מציאת פסוק על פי שם</h2>
+
+<!-- טופס למציאת פסוק לפי שם -->
+<form method="post">
+    <label>שם פרטי:</label>
+    <input type="text" name="personal_name" required>
+    <input type="submit" value="מצא פסוק מתאים לשם">
+</form>
+
+<!-- תוצאת פסוק לפי שם -->
+{% if name_result %}
+    <div class="verse">
+        <div class="location">
+            {{ book_names[name_result.book] }} פרק {{ hebrew_numerals[name_result.chapter] }} פסוק {{ hebrew_numerals[name_result.verse] }}
+        </div>
+        <div class="text">{{ name_result.text }}</div>
+    </div>
+{% endif %}
+
+</body>
+</html>

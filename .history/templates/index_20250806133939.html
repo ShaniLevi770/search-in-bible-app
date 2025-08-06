@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>🔎 חיפוש בתנ״ך</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            direction: rtl;
+            background-color: #f9f9f9;
+            padding: 2em;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        form {
+            margin-bottom: 2em;
+        }
+        input[type="text"], input[type="number"] {
+            padding: 0.5em;
+            font-size: 1em;
+            width: 250px;
+            margin-left: 0.5em;
+        }
+        input[type="submit"] {
+            padding: 0.5em 1em;
+            font-size: 1em;
+        }
+        .verse {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 1em;
+            border-radius: 6px;
+            margin-bottom: 1em;
+        }
+        .verse b {
+            color: red;
+        }
+        .location {
+            color: #555;
+            font-size: 0.9em;
+            margin-bottom: 0.5em;
+        }
+        .warning {
+            color: darkred;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<h1>🔎 חיפוש מילים בתנ״ך</h1>
+
+<!-- 📌 Search Form -->
+<form method="post">
+    <label>הכנס שם:</label>
+    <input type="text" name="name" placeholder="לדוגמה: אדם" required>
+    <br><br>
+    <label>מילה לחיפוש בדילוגי אותיות:</label>
+    <input type="text" name="word" value="{{ word or '' }}">
+    <label>דילוג:</label>
+    <input type="number" name="skip" value="{{ skip or 0 }}" min="0">
+    <br><br>
+    <input type="submit" value="🔍 חפש">
+</form>
+
+<!-- ⚠ Warning -->
+{% if warning %}
+    <p class="warning">{{ warning }}</p>
+{% endif %}
+
+<!-- ✅ Matched Verses -->
+{% if results %}
+    <h2>נמצאו {{ results|length }} תוצאות:</h2>
+    {% for r in results %}
+        <div class="verse">
+            <div class="location">{{ r.source }}</div>
+            <div class="text">{{ r.highlighted|safe }}</div>
+        </div>
+    {% endfor %}
+{% elif name %}
+    <p>❌ לא נמצאו תוצאות לשם "{{ name }}"</p>
+{% endif %}
+
+</body>
+</html>

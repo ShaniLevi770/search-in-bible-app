@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>🔍 חיפוש בתנ"ך</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            direction: rtl;
+            background-color: #f9f9f9;
+            padding: 2em;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        form {
+            margin-bottom: 2em;
+        }
+        input[type="text"], input[type="number"] {
+            padding: 0.5em;
+            font-size: 1em;
+            width: 250px;
+            margin-left: 0.5em;
+        }
+        input[type="submit"] {
+            padding: 0.5em 1em;
+            font-size: 1em;
+        }
+        .verse {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 1em;
+            border-radius: 6px;
+            margin-bottom: 1em;
+        }
+        .verse b {
+            color: red;
+        }
+        .location {
+            color: #555;
+            font-size: 0.9em;
+            margin-bottom: 0.5em;
+        }
+        .warning {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<h1>🔎 חיפוש בתנ״ך</h1>
+
+<!-- טופס חיפוש בדילוגי אותיות -->
+<form method="post">
+    <label>מילה לחיפוש בדילוג:</label>
+    <input type="text" name="word" value="{{ word }}">
+    <label>דילוג (0 לחיפוש רגיל):</label>
+    <input type="number" name="skip" value="{{ skip }}" min="0">
+    <input type="submit" value="חפש בדילוגים">
+</form>
+
+<!-- טופס חיפוש לפי שם -->
+<form method="post" onsubmit="return validateNameForm()">
+    <label>שם לחיפוש (אות ראשונה ואחרונה):</label>
+    <input type="text" id="nameInput" name="name" value="{{ name or '' }}">
+    <input type="submit" value="מצא פסוקים לפי שם">
+    <div id="nameWarning" class="warning"></div>
+</form>
+
+<!-- תוצאות דילוג -->
+{% if results %}
+    <h2>תוצאות חיפוש בדילוג:</h2>
+    {% for r in results %}
+        <div class="verse">
+            <div class="location">{{ r.source }}</div>
+            <div class="text">{{ r.highlighted | safe }}</div>
+        </div>
+    {% endfor %}
+{% elif word %}
+    <p>❌ לא נמצאו תוצאות לחיפוש "{{ word }}"</p>
+{% endif %}
+
+<!-- תוצאות לפי שם -->
+{% if name_results %}
+    <h2>תוצאות חיפוש לפי שם:</h2>
+    {% for r in name_results %}
+        <div class="verse">
+            <div class="location">{{ r.source }}</div>
+            <div class="text">{{ r.highlighted | safe }}</div>
+        </div>
+    {% endfor %}
+{% elif name_not_found %}
+    <p>❌ לא נמצאו פסוקים שמתחילים ומסתיימים באותיות המתאימות לשם "{{ name }}"</p>
+{% endif %}
+
+<script>
+function validateNameForm() {
+    const input = document.getElementById("nameInput").value.trim();
+    const warning = document.getElementById("nameWarning");
+
+    if (input.length < 2) {
+        warning.textContent = "❗יש להזין לפחות שתי אותיות.";
+        return false;
+    }
+
+    const hebrewRegex = /^[\u0590-\u05FF]+$/;
+    if (!hebrewRegex.test(input)) {
+        warning.textContent = "❗נא להזין אותיות בעברית בלבד.";
+        return false;
+    }
+
+    warning.textContent = "";
+    return true;
+}
+</script>
+
+</body>
+</html>
