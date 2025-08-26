@@ -108,4 +108,12 @@
 
 
 </body>
+
+ <script>
+        // Check if there's a known error string (optional)
+        if (document.body.innerText.includes("Bad Gateway") || document.body.innerText.includes("502")) {
+            // Retry after 3 seconds
+            setTimeout(() => location.reload(), 3000);
+        }
+    </script>
 </html>
